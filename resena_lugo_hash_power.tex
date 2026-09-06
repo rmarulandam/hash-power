@@ -38,27 +38,27 @@ En \emph{Performance Evaluation for the Hash Generation Phase of a Democratic Bl
 Lugo y César Pedraza analizan cómo distintas técnicas de computación 
 paralela afectan el tiempo de ejecución y el consumo energético de la generación de hashes. 
 El estudio se basa en el protocolo de minería democrática propuesto por Paul, Sarkar y Mukherjee (2014),
-concebido como una alternativa al esquema competitivo de prueba de trabajo de Bitcoin. :contentReference[oaicite:0]{index=0}
+concebido como una alternativa al esquema competitivo de prueba de trabajo de Bitcoin.
 
 A diferencia de Bitcoin, donde los mineros compiten por encontrar un hash que satisfaga una 
 condición de dificultad, el protocolo democrático selecciona el menor hash generado dentro de 
 una ventana temporal. Su objetivo es reducir la ventaja asociada con una mayor 
-capacidad computacional. El mecanismo comprende tres fases: generación, difusión y validación de hashes. :contentReference[oaicite:1]{index=1}
+capacidad computacional. El mecanismo comprende tres fases: generación, difusión y validación de hashes. 
 
-Lugo y Pedraza evalúan únicamente la primera fase mediante POSIX y OpenMP sobre CPU, 
+Lugo y Pedraza evalúan la primera fase mediante POSIX y OpenMP sobre CPU, 
 CUDA y OpenCL sobre GPU, y Open MPI en un clúster. Las GPU presentan el mejor desempeño: 
 el tiempo de ejecución disminuye desde aproximadamente 1.351 segundos en CPU hasta 106--120 segundos, 
 mientras CUDA registra el menor consumo energético estimado, con 4,66~Wh frente a cerca de 21~Wh en 
-CPU y 100,20~Wh en Open MPI. :contentReference[oaicite:2]{index=2}
+CPU y 100,20~Wh en Open MPI. 
 
-El artículo demuestra que la arquitectura de hardware influye de manera importante 
+El artículo demuestra que el hardware influye de manera importante 
 en la eficiencia de la generación de hashes. Sin embargo, no evalúa el protocolo 
 completo, las fases de comunicación y validación, el comportamiento estratégico de los 
 participantes ni el consumo energético real de una red operativa. 
 Por ello, sus resultados permiten valorar el desempeño computacional de una fase del protocolo, 
 pero no establecer que una blockchain democrática sea, en términos sistémicos, 
 más segura, escalable, descentralizada o sostenible que Bitcoin. Esta distinción 
-constituye el eje de la presente revisión.
+constituye el eje de esta revisión.
 
 \section{Contexto histórico}\label{contexto-historico}
 
@@ -67,7 +67,7 @@ capaz de resolver el doble gasto sin una autoridad central. Su diseño combina f
 una red \emph{peer-to-peer}, bloques enlazados criptográficamente y prueba de 
 trabajo (\emph{proof-of-work}, PoW). En este esquema, la cadena válida es la que acumula mayor 
 trabajo computacional y la seguridad depende de que los participantes honestos 
-controlen más capacidad de cómputo que cualquier grupo coordinado de atacantes (Nakamoto, 2008). :contentReference[oaicite:0]{index=0}
+controlen más capacidad de cómputo que cualquier grupo coordinado de atacantes (Nakamoto, 2008).
 
 La prueba de trabajo vincula la probabilidad de producir un bloque con la 
 participación del minero en el poder de cómputo de la red. Con la expansión de Bitcoin, 
@@ -80,26 +80,26 @@ dependencia del poder computacional. En lugar de premiar al primer nodo que encu
 inferior al objetivo de dificultad, su protocolo selecciona el menor hash generado dentro de 
 una ventana temporal y divide el proceso en tres fases: generación, difusión y validación. 
 La propuesta busca ampliar la participación, estabilizar la creación de bloques y reducir el 
-desperdicio de cómputo. :contentReference[oaicite:1]{index=1}
+desperdicio de cómputo.
 
 El cambio introduce, sin embargo, un nuevo \emph{trade-off}: mientras en Bitcoin los hashes 
 fallidos permanecen localmente y solo se propagan los bloques válidos, el 
 protocolo democrático requiere intercambio adicional de resultados para determinar y validar 
 el mínimo. Los propios autores reconocen una mayor complejidad de mensajes y el
-riesgo de inundación de comunicaciones. :contentReference[oaicite:2]{index=2}
+riesgo de inundación de comunicaciones.
 
 Lugo y Pedraza (2020) estudian únicamente la fase de generación 
 de hashes de este protocolo. Actualizan el encabezado sustituyendo SHA-1 por SHA-256 para la 
 dirección del usuario y emplean datos del bloque de Bitcoin 453194 como carga experimental. 
-Comparan CPU, GPU y un clúster mediante POSIX, OpenMP, CUDA, OpenCL y Open MPI. :contentReference[oaicite:3]{index=3} 
+Comparan CPU, GPU y un clúster mediante POSIX, OpenMP, CUDA, OpenCL y Open MPI.
+
 Esta configuración permite evaluar estrategias de paralelización, aunque no 
 reproduce la infraestructura ASIC que ya dominaba la minería de Bitcoin, por lo que el estudio 
-debe interpretarse como un análisis de rendimiento computacional del protocolo democrático y 
-no como una evaluación directa de la red Bitcoin.
+debe interpretarse como un análisis de rendimiento computacional del protocolo democrático.
 
 \section{Argumentos a favor}\label{argumentos-a-favor}
 
-Uno de los principales méritos del artículo es la claridad con la que delimita la fase de generación 
+Uno de los principales méritos del artículo es delimitar la fase de generación 
 de hashes. Los autores especifican el encabezado de bloque, el rango del nonce, la función 
 criptográfica y las plataformas experimentales, lo que facilita la interpretación y 
 reproducción del ejercicio.
@@ -115,18 +115,18 @@ segundos en CPU hasta cerca de \(120\) segundos, mientras OpenCL alcanza unos \(
 Los autores reportan aceleraciones de 11,28 y 12,74, respectivamente, lo que confirma que 
 la generación de hashes es una carga altamente paralelizable.
 
-El artículo también incorpora una dimensión energética. Los consumos estimados son 
+El artículo también incorpora un análisis energético. Los consumos estimados son 
 de aproximadamente 21,05 Wh para POSIX, 21,10 Wh para OpenMP, 100,20 Wh para Open MPI y 4,66 Wh 
 para CUDA. El resultado muestra que una plataforma de mayor potencia puede consumir 
 menos energía total si reduce suficientemente el tiempo de ejecución.
 
-En conjunto, el trabajo muestra que la arquitectura de hardware condiciona 
+El trabajo muestra que la arquitectura de hardware condiciona 
 de forma importante el costo computacional y energético de ejecutar la fase de 
 generación de hashes del protocolo democrático.
 
 \section{Argumentos en contra}\label{argumentos-en-contra}
 
-La principal limitación es el alcance sistémico. Aunque los autores
+La principal limitación es el alcance. Aunque los autores
 estudian la generación de hashes, que identifican como la fase
 computacionalmente más demandante del protocolo, no evalúan las fases de
 difusión y validación ni el funcionamiento de una red completa. Esto es
@@ -149,7 +149,7 @@ económica o ambiental del protocolo democrático.
 
 \section{Conclusión}\label{conclusion}
 
-Lugo y Pedraza muestran que la eficiencia de la generación de hashes depende fuertemente 
+Lugo y Pedraza muestran que la eficiencia de la generación de hashes depende 
 de la arquitectura computacional. En sus pruebas, CUDA y OpenCL reducen el tiempo de ejecución 
 aproximadamente un orden de magnitud frente a la CPU, mientras CUDA presenta el menor consumo 
 energético estimado. Además, la sustitución de SHA-1 por SHA-256 corrige una debilidad 
@@ -157,16 +157,16 @@ criptográfica del protocolo democrático original.
 
 El principal aporte del artículo es, por tanto, un análisis de 
 desempeño de la fase computacionalmente más exigente del protocolo. 
-Sin embargo, quedan fuera de su alcance la seguridad estratégica, la escalabilidad de 
+Sin embargo, quedan fuera de su alcance la escalabilidad de 
 las comunicaciones, el comportamiento económico de los participantes y el 
 desempeño del sistema completo. La estimación indirecta del consumo eléctrico 
 y la ausencia de hardware ASIC también limitan cualquier comparación directa 
 con la infraestructura de minería de Bitcoin.
 
-Una extensión natural sería implementar el protocolo completo en una red heterogénea, 
+Una extensión del artículo sería implementar el protocolo completo en una red heterogénea, 
 medir directamente el consumo eléctrico, incorporar los costos de comunicación 
 y evaluar su comportamiento frente a participantes estratégicos. También sería 
-necesario distinguir entre la eficiencia energética de una implementación y 
+beneficioso distinguir entre la eficiencia energética de una implementación y 
 la demanda agregada inducida por los incentivos del protocolo.
 
 Una dimensión adicional que merece incorporarse en la evaluación energética 
@@ -176,15 +176,15 @@ concentran una elevada carga térmica en un volumen reducido y operan de
 forma casi continua, lo que puede facilitar la captura y valorización de 
 calor para usos térmicos de baja o media temperatura. En ese contexto, la eficiencia 
 energética también debería considerar la fracción de esa 
-energía que puede recuperarse de manera útil. Esto no elimina el costo energético de 
-la minería, pero sí modifica su balance energético efectivo cuando existe una demanda 
+energía que puede recuperarse de manera útil. Esto, aunque mantiene su costo energético,
+modifica también su balance energético efectivo cuando existe una demanda 
 térmica cercana y técnicamente compatible.
 
 Desde una perspectiva económica, el artículo aporta evidencia útil 
 sobre costos de participación, especialización del hardware y eficiencia energética, 
 pero no demuestra que el protocolo democrático sea superior a la prueba de trabajo de Bitcoin 
 en seguridad, descentralización o sostenibilidad. La eficiencia por hash es una condición 
-relevante, pero no suficiente, para evaluar una infraestructura digital.
+necesaria, pero no suficiente, para evaluar una infraestructura digital. 
 
 \section{Referencias}\label{referencias}
 
