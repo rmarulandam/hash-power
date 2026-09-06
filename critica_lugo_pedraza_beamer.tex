@@ -30,8 +30,17 @@
 \setbeamertemplate{frametitle}{\vspace{0.25cm}\insertframetitle\par\vspace{0.1cm}\hrule height 0.5pt\vspace{0.2cm}}
 \setbeamertemplate{footline}{\hfill\scriptsize\insertframenumber/10\hspace{0.35cm}\vspace{0.15cm}}
 
-\newcommand{\tagbox}[2]{\tikz[baseline=(X.base)]\node[rounded corners=2pt,fill=#1,inner xsep=5pt,inner ysep=2pt](X){\scriptsize\textbf{#2}};}
+\newcommand{\tagbox}[2]{\tikz[baseline=(X.base)]\node[rounded corners=2pt,fill=#1,inner xsep=4.5pt,inner ysep=1.5pt,minimum height=0pt,minimum width=0pt,text width={}](X){\scriptsize\textbf{#2}};}
 \newcommand{\source}[1]{\vfill{\tiny\color{DarkGray}Fuente: #1}}
+
+% TikZ overlay transparency style (keeps layout stable across overlays)
+\tikzset{
+  invisible/.style={opacity=0,text opacity=0,draw opacity=0,fill opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}%
+  }
+}
 
 \title{Crítica a \emph{Performance Evaluation for the Hash Generation Phase of a Democratic Blockchain}}
 \subtitle{Eficiencia computacional, consenso y sostenibilidad}
@@ -43,89 +52,159 @@
 
 % 1
 \begin{frame}[plain]
-  \vspace{0.4cm}
-  {\Large\bfseries\color{DeepBlue} Crítica a Lugo y Pedraza (2020)}\\[0.15cm]
-  {\large \emph{Performance Evaluation for the Hash Generation Phase of a Democratic Blockchain}}\\[0.25cm]
-  {\small Andrés Arias, Catalina Jaramillo y Rafael Marulanda}\\[0.06cm]
-  {\scriptsize Pontificia Universidad Javeriana}\\[0.35cm]
-  \begin{tikzpicture}[x=1cm,y=1cm]
-    \node[draw=DeepBlue, rounded corners=5pt, line width=1pt, fill=SoftBlue, minimum width=3.4cm, minimum height=1.0cm] (a) at (0,0) {\textbf{Hashing}};
-    \node[draw=Accent, rounded corners=5pt, line width=1pt, fill=SoftOrange, minimum width=3.4cm, minimum height=1.0cm] (b) at (4.2,0) {\textbf{Hardware}};
-    \node[draw=DarkGray, rounded corners=5pt, line width=1pt, fill=white, minimum width=3.4cm, minimum height=1.0cm] (c) at (8.4,0) {\textbf{Consenso}};
-    \draw[-{Latex[length=2.5mm]},thick,DeepBlue] (a) -- (b);
-    \draw[-{Latex[length=2.5mm]},thick,Accent] (b) -- (c);
-    \node[font=\small,align=center,text width=10.5cm] at (4.2,-1.1) {El artículo mide bien una subrutina computacional, pero no prueba superioridad sistémica del protocolo democrático.};
+  \vspace{0.1cm}
+  % Header Banner
+  \begin{tikzpicture}
+    \node[fill=DeepBlue, text=white, rounded corners=3pt, inner sep=8pt, text width=\linewidth-16pt, align=left] {
+      {\large\bfseries Crítica a Lugo y Pedraza (2020)}\\[0.08cm]
+      {\small\itshape Performance Evaluation for the Hash Generation Phase of a Democratic Blockchain}
+    };
   \end{tikzpicture}
+  \vspace{0.15cm}
+
+  \begin{columns}[c,totalwidth=\textwidth]
+    \column{0.55\textwidth}
+      {\footnotesize\textbf{Andrés Arias $\cdot$ Catalina Jaramillo $\cdot$ Rafael Marulanda}}\\[0.05cm]
+      {\scriptsize Pontificia Universidad Javeriana $\cdot$ 4 de septiembre de 2026}
+    \column{0.41\textwidth}
+      \raggedleft\tagbox{SoftOrange}{\color{Accent}Evaluación de Consenso \& Minería}
+  \end{columns}
+
+  \vspace{0.4cm}
+
+  % 3 Horizontal Pillar Cards
+  \centering
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \node[draw=DeepBlue, fill=SoftBlue, rounded corners=4pt, text width=3.6cm, align=center, inner sep=6pt] (c1) at (0,0) {
+      {\scriptsize\textbf{\color{DeepBlue}Cómputo Paralelo}}\\[0.06cm]
+      {\tiny Benchmark CPU vs. GPU (CUDA/OpenCL) vs. MPI}
+    };
+    \node[draw=Accent, fill=SoftOrange, rounded corners=4pt, text width=3.6cm, align=center, inner sep=6pt] (c2) at (4.5,0) {
+      {\scriptsize\textbf{\color{Accent}Consumo Energético}}\\[0.06cm]
+      {\tiny Modelo de potencia y eficiencia por hash (Wh)}
+    };
+    \node[draw=DarkGray, fill=gray!8, rounded corners=4pt, text width=3.6cm, align=center, inner sep=6pt] (c3) at (9.0,0) {
+      {\scriptsize\textbf{\color{DarkGray}Dinámica de Red}}\\[0.06cm]
+      {\tiny Sobrecarga de mensajes y seguridad Sybil}
+    };
+
+    \draw[-{Latex[length=2.2mm]}, thick, DeepBlue] (c1) -- (c2);
+    \draw[-{Latex[length=2.2mm]}, thick, Accent] (c2) -- (c3);
+  \end{tikzpicture}
+
   \vfill
-  {\footnotesize Nakamoto (2008); Paul, Sarkar y Mukherjee (2014); Lugo y Pedraza (2020).}
+  {\tiny\color{DarkGray} Marco teórico: Nakamoto (2008); Paul, Sarkar \& Mukherjee (2014); Lugo \& Pedraza (2020).}
 \end{frame}
 
 % 2
-\begin{frame}{Pregunta de la revisión}
-\begin{columns}[T,totalwidth=\textwidth]
-\column{0.53\textwidth}
-\textbf{Objeto del artículo}\vspace{0.15cm}
-\begin{itemize}\setlength\itemsep{0.25cm}
-  \item Fase de generación de hashes de una blockchain democrática.
-  \item Comparación de CPU, GPU y clúster.
-  \item Medición de tiempo y estimación de energía.
-\end{itemize}
+\begin{frame}{Pregunta de la revisión y tesis central}
+  \vspace{-0.1cm}
+  % Central Guiding Question Callout
+  \begin{tikzpicture}
+    \node[fill=SoftBlue, draw=DeepBlue, rounded corners=4pt, line width=0.8pt, inner sep=7pt, text width=\linewidth-16pt, align=left] {
+      {\footnotesize\textbf{\color{DeepBlue}}} \;\;
+      \small\itshape ¿Basta la aceleración paralela y el menor consumo energético en la generación local de hashes para validar la viabilidad y sostenibilidad de una blockchain democrática frente a Bitcoin?
+    };
+  \end{tikzpicture}
 
-\column{0.44\textwidth}
-\begin{tikzpicture}
-  \node[rounded corners=5pt, fill=SoftBlue, draw=DeepBlue, text width=4.8cm, inner sep=8pt] {
-  \textbf{Tesis crítica}\par\vspace{0.1cm}
-  La eficiencia por hash es relevante, pero no basta para inferir seguridad, descentralización, escalabilidad o sostenibilidad del sistema completo.
-  };
-\end{tikzpicture}
-\end{columns}
+  \vspace{0.35cm}
+
+  % Two Comparative Cards
+  \begin{columns}[T,totalwidth=\textwidth]
+    % Left Card: The Paper's Empirical Scope
+    \column{0.48\textwidth}
+    \begin{tikzpicture}
+      \node[draw=DeepBlue!40, fill=gray!3, rounded corners=4pt, inner sep=8pt, text width=\linewidth-18pt] {
+        {\scriptsize\textbf{\color{DeepBlue}1. OBJETO DEL ARTÍCULO (Lugo \& Pedraza, 2020)}}\\[0.15cm]
+        \begin{itemize}\setlength\itemsep{0.18cm}\scriptsize
+          \item \textbf{Fase evaluada:} Generación de hashes aislada en el protocolo de Paul et al. (2014).
+          \item \textbf{Arquitecturas:} CPU (OpenMP), GPU (CUDA, OpenCL) y Clúster (Open MPI).
+          \item \textbf{Variables medidas:} Tiempo de ejecución ($t$) y consumo energético estimado ($Wh$).
+        \end{itemize}
+      };
+    \end{tikzpicture}
+
+    % Right Card: The Critical Stance
+    \column{0.48\textwidth}
+    \uncover<2->{
+    \begin{tikzpicture}
+      \node[draw=Accent, fill=SoftOrange, rounded corners=4pt, line width=0.8pt, inner sep=8pt, text width=\linewidth-18pt] {
+        {\scriptsize\textbf{\color{Accent}2. TESIS DE ESTA REVISIÓN}}\\[0.15cm]
+        {\footnotesize\textbf{La eficiencia micro no garantiza la viabilidad macro}}\par\vspace{0.15cm}
+        {\scriptsize La optimización por hash es necesaria pero insuficiente para inferir seguridad, descentralización, escalabilidad o sostenibilidad del sistema completo sin modelar la difusión de red ni los incentivos estratégicos.}
+      };
+    \end{tikzpicture}
+    }
+  \end{columns}
 \end{frame}
 
 % 3
-\begin{frame}{Bitcoin PoW vs. minería democrática}
+\begin{frame}{Bitcoin PoW vs. consenso democrático}
+\vspace{-0.15cm}
 \centering
-\begin{tikzpicture}[node distance=0.75cm, every node/.style={font=\small}]
-  \node[draw=DeepBlue, fill=SoftBlue, rounded corners, minimum width=4.7cm, minimum height=0.8cm] (pow1) {Bitcoin PoW};
-  \node[below=of pow1, draw=DeepBlue, rounded corners, text width=4.7cm, align=center, minimum height=1.0cm] (pow2) {Encontrar primero un hash \(H<T\)};
-  \node[below=of pow2, draw=DeepBlue, rounded corners, text width=4.7cm, align=center, minimum height=1.0cm] (pow3) {Probabilidad proporcional al poder de cómputo};
-  \node[below=of pow3, draw=DeepBlue, rounded corners, text width=4.7cm, align=center, minimum height=1.0cm] (pow4) {Seguridad por trabajo acumulado};
+\begin{tikzpicture}[
+  node distance=0.16cm,
+  header_pow/.style={draw=DeepBlue, fill=DeepBlue, text=white, rounded corners=3pt, font=\scriptsize\bfseries, text width=6.2cm, align=center, inner sep=3.5pt, minimum height=0.52cm},
+  header_dem/.style={draw=Accent, fill=Accent, text=white, rounded corners=3pt, font=\scriptsize\bfseries, text width=6.2cm, align=center, inner sep=3.5pt, minimum height=0.52cm},
+  step_pow/.style={draw=DeepBlue!80, fill=SoftBlue!60, rounded corners=3pt, font=\scriptsize, text width=6.2cm, align=left, inner sep=4pt, minimum height=0.92cm},
+  step_dem/.style={draw=Accent!80, fill=SoftOrange!60, rounded corners=3pt, font=\scriptsize, text width=6.2cm, align=left, inner sep=4pt, minimum height=0.92cm}
+]
+  % Common Root Node
+  \node[draw=DarkGray, fill=gray!12, rounded corners=3pt, font=\scriptsize\bfseries, inner sep=3.5pt] (start) at (0, 2.65) {Propuesta: Bloque con Transacciones Pendientes};
 
-  \node[right=1.3cm of pow1, draw=Accent, fill=SoftOrange, rounded corners, minimum width=4.7cm, minimum height=0.8cm] (dem1) {Protocolo democrático};
-  \node[below=of dem1, draw=Accent, rounded corners, text width=4.7cm, align=center, minimum height=1.0cm] (dem2) {Generar hashes en una ventana temporal};
-  \node[below=of dem2, draw=Accent, rounded corners, text width=4.7cm, align=center, minimum height=1.0cm] (dem3) {Seleccionar el menor hash};
-  \node[below=of dem3, draw=Accent, rounded corners, text width=4.7cm, align=center, minimum height=1.0cm] (dem4) {Menos carrera local, más coordinación};
+  % Branch Headers
+  \node[header_pow] (h_pow) at (-3.7, 1.82) {Bitcoin: Carrera PoW (Nakamoto, 2008)};
+  \node[header_dem] (h_dem) at (3.7, 1.82) {Consenso Democrático (Paul et al., 2014)};
 
-  \draw[-{Latex[length=2mm]}, thick] (pow1) -- (pow2);
-  \draw[-{Latex[length=2mm]}, thick] (pow2) -- (pow3);
-  \draw[-{Latex[length=2mm]}, thick] (pow3) -- (pow4);
-  \draw[-{Latex[length=2mm]}, thick] (dem1) -- (dem2);
-  \draw[-{Latex[length=2mm]}, thick] (dem2) -- (dem3);
-  \draw[-{Latex[length=2mm]}, thick] (dem3) -- (dem4);
+  % PoW Path (Steps 1, 2, 3) - Visible from frame 1
+  \node[step_pow, below=0.16cm of h_pow] (p1) {
+    \textbf{1. Búsqueda estocástica:}\\[0.02cm]
+    Hashing continuo e independiente hasta hallar un hash \(H < T\).
+  };
+  \node[step_pow, below=0.16cm of p1] (p2) {
+    \textbf{2. Difusión inmediata:}\\[0.02cm]
+    El ganador propaga únicamente su bloque válido (\(O(1)\) en red).
+  };
+  \node[step_pow, below=0.16cm of p2] (p3) {
+    \textbf{3. Consenso por trabajo:}\\[0.02cm]
+    Inmutabilidad respaldada por costo termodinámico y dificultad.
+  };
+
+  % Democratic Path (Steps 1, 2, 3) - Revealed on frame 2
+  \node[step_dem, below=0.16cm of h_dem, visible on=<2->] (d1) {
+    \textbf{1. Ventana temporal (\(\Delta t\)):}\\[0.02cm]
+    Todos los nodos generan hashes en el mismo intervalo local.
+  };
+  \node[step_dem, below=0.16cm of d1, visible on=<2->] (d2) {
+    \textbf{2. Difusión masiva de red:}\\[0.02cm]
+    Todos los nodos difunden y cruzan sus mínimos locales (\(O(N)\)).
+  };
+  \node[step_dem, below=0.16cm of d2, visible on=<2->] (d3) {
+    \textbf{3. Consenso por coordinación:}\\[0.02cm]
+    Selección del mínimo global; sensible a latencia, DoS y Sybil.
+  };
+
+  % Branch Arrows from Start to Headers
+  \draw[-{Latex[length=1.8mm]}, thick, DeepBlue] (start.south) -| (h_pow.north);
+  \draw[-{Latex[length=1.8mm]}, thick, Accent] (start.south) -| (h_dem.north);
+
+  % Internal Pathway Arrows
+  \draw[-{Latex[length=1.5mm]}, thick, DeepBlue] (h_pow) -- (p1);
+  \draw[-{Latex[length=1.5mm]}, thick, DeepBlue] (p1) -- (p2);
+  \draw[-{Latex[length=1.5mm]}, thick, DeepBlue] (p2) -- (p3);
+  \draw[-{Latex[length=1.5mm]}, thick, Accent, visible on=<2->] (h_dem) -- (d1);
+  \draw[-{Latex[length=1.5mm]}, thick, Accent, visible on=<2->] (d1) -- (d2);
+  \draw[-{Latex[length=1.5mm]}, thick, Accent, visible on=<2->] (d2) -- (d3);
+
+  % Bottom Synthesis Callout Banner - Revealed on frame 3
+  \node[fill=gray!8, draw=DarkGray!40, rounded corners=3pt, inner sep=4pt, text width=13.4cm, align=center, below=0.22cm of $(p3.south)!0.5!(d3.south)$, visible on=<3->] (takeaway) {
+    {\scriptsize\textbf{\color{DeepBlue}Tensión de diseño:}} \;\;
+    {\scriptsize PoW sustituye coordinación por gasto energético; el esquema democrático reduce energía pero traslada la carga a la saturación de red.}
+  };
 \end{tikzpicture}
 \end{frame}
 
 % 4
-\begin{frame}{Alcance real del experimento}
-\centering
-\begin{tikzpicture}[node distance=1.0cm, every node/.style={font=\small}]
-  \node[draw=Good, fill=Good!10, rounded corners, minimum width=3.5cm, minimum height=1cm] (gen) {\textbf{Generación}};
-  \node[right=1.1cm of gen, draw=Warn, fill=Warn!10, rounded corners, minimum width=3.5cm, minimum height=1cm] (dif) {Difusión};
-  \node[right=1.1cm of dif, draw=Warn, fill=Warn!10, rounded corners, minimum width=3.5cm, minimum height=1cm] (val) {Validación};
-  \draw[-{Latex[length=2.5mm]}, thick] (gen) -- (dif);
-  \draw[-{Latex[length=2.5mm]}, thick] (dif) -- (val);
-  \node[below=0.55cm of gen, text width=3.5cm, align=center] {Fase evaluada};
-  \node[below=0.55cm of dif, text width=3.5cm, align=center] {No medida};
-  \node[below=0.55cm of val, text width=3.5cm, align=center] {No medida};
-  \draw[decorate,decoration={brace,amplitude=5pt,mirror},thick,Warn] ($(dif.south west)+(0,-0.95)$) -- ($(val.south east)+(0,-0.95)$) node[midway,below=0.18cm,text width=6.5cm,align=center] {Costos sistémicos: mensajes, latencia, escalabilidad, consenso};
-\end{tikzpicture}
-\vspace{0.25cm}
-\begin{center}
-\tagbox{Good!15}{Punto a favor}: analiza la fase computacionalmente más demandante.\quad
-\tagbox{Warn!15}{Límite}: no evalúa la red completa.
-\end{center}
-\end{frame}
-
-% 5
 \begin{frame}{Diseño experimental}
 \begin{columns}[T,totalwidth=\textwidth]
 \column{0.48\textwidth}
@@ -138,127 +217,406 @@
 \end{tikzpicture}
 
 \column{0.49\textwidth}
+\uncover<2->{
 \begin{tikzpicture}[every node/.style={font=\small}, node distance=0.4cm]
   \node[draw=DarkGray, rounded corners, text width=5cm, inner sep=5pt] (cpu) {\textbf{CPU}: Intel i7-7700HQ\\POSIX, OpenMP};
   \node[below=of cpu, draw=DarkGray, rounded corners, text width=5cm, inner sep=5pt] (gpu) {\textbf{GPU}: GTX 1050\\CUDA, OpenCL};
   \node[below=of gpu, draw=DarkGray, rounded corners, text width=5cm, inner sep=5pt] (mpi) {\textbf{Clúster}: 4 instancias GCP\\Open MPI};
   \node[below=0.7cm of mpi, fill=SoftOrange, draw=Accent, rounded corners, text width=5cm, inner sep=6pt] {No incluye ASIC: limita la comparación con minería competitiva de Bitcoin.};
 \end{tikzpicture}
+}
+\end{columns}
+\end{frame}
+
+% 5
+\begin{frame}{Alcance del experimento}
+\vspace{-0.15cm}
+\centering
+
+% 3-Stage Pipeline
+\begin{tikzpicture}[
+  stage_eval/.style={draw=Good!80!black, fill=Good!12, rounded corners=3pt, font=\scriptsize, text width=3.8cm, align=center, inner sep=4pt, minimum height=0.95cm},
+  stage_omit/.style={draw=Warn!90!black, fill=Warn!12, rounded corners=3pt, font=\scriptsize, text width=3.8cm, align=center, inner sep=4pt, minimum height=0.95cm}
+]
+  \node[stage_eval] (s1) at (-4.6, 0) {
+    \textbf{1. Generación}\\[0.03cm]
+    {\tiny Cálculo local de hashes SHA-256}\\[0.05cm]
+    \tagbox{Good!25}{\color{Good!90!black}\tiny\textbf{$\checkmark$ Fase evaluada}}
+  };
+
+  \node[stage_omit] (s2) at (0, 0) {
+    \textbf{2. Difusión}\\[0.03cm]
+    {\tiny Broadcast de mínimos locales}\\[0.05cm]
+    \tagbox{Warn!25}{\color{Warn!90!black}\tiny\textbf{$\times$ No medida}}
+  };
+
+  \node[stage_omit] (s3) at (4.6, 0) {
+    \textbf{3. Validación}\\[0.03cm]
+    {\tiny Elección del ganador global}\\[0.05cm]
+    \tagbox{Warn!25}{\color{Warn!90!black}\tiny\textbf{$\times$ No medida}}
+  };
+
+  \draw[-{Latex[length=2mm]}, thick, DarkGray] (s1) -- (s2);
+  \draw[-{Latex[length=2mm]}, thick, DarkGray] (s2) -- (s3);
+
+  % Scope Annotation Bracket
+  \draw[decorate,decoration={brace,amplitude=4pt,mirror},thick,Warn] 
+    ($(s2.south west)+(0,-0.10)$) -- ($(s3.south east)+(0,-0.10)$)
+    node[midway,below=0.12cm,font=\tiny\bfseries,color=Warn!90!black] {Costos sistémicos de red: mensajes, latencia, ancho de banda y seguridad};
+\end{tikzpicture}
+
+\vspace{0.4cm}
+
+% Dual Evaluation Cards
+\begin{columns}[T,totalwidth=\textwidth]
+  % Card Left: Mérito metodológico
+  \column{0.48\textwidth}
+  \uncover<2->{
+  \begin{tikzpicture}
+    \node[draw=Good!60!black, fill=Good!5, rounded corners=4pt, inner sep=6.5pt, text width=\linewidth-16pt] {
+      {\scriptsize\textbf{\color{Good!80!black}$\checkmark$ Mérito: Rigor en la fase de cómputo}}\\[0.12cm]
+      \begin{itemize}\setlength\itemsep{0.12cm}\tiny
+        \item \textbf{Aislamiento controlado:} Delimita con precisión la rutina computacionalmente más intensiva (hashing SHA-256).
+        \item \textbf{Benchmarking de hardware:} Demuestra que GPU (CUDA / OpenCL) acelera entre \(11\times\) y \(13\times\) frente a CPU.
+        \item \textbf{Carga estandarizada:} Utiliza la estructura real del bloque de Bitcoin 453194.
+      \end{itemize}
+    };
+  \end{tikzpicture}
+  }
+
+  % Card Right: Límite crítico
+  \column{0.48\textwidth}
+  \uncover<3->{
+  \begin{tikzpicture}
+    \node[draw=Warn!70!black, fill=Warn!5, rounded corners=4pt, inner sep=6.5pt, text width=\linewidth-16pt] {
+      {\scriptsize\textbf{\color{Warn!90!black}$\times$ Límite: Exclusión del entorno distribuido}}\\[0.12cm]
+      \begin{itemize}\setlength\itemsep{0.12cm}\tiny
+        \item \textbf{Inundación de red (\emph{flooding}):} No mide el costo de propagar \(O(N)\) o \(O(N^2)\) mensajes por bloque.
+        \item \textbf{Latencia y sincronización:} Omite las demoras de reloj y asincronía que determinan forks en producción.
+        \item \textbf{Energía sistémica incompleta:} Ignora el consumo de los nodos en espera y transferencia de datos.
+      \end{itemize}
+    };
+  \end{tikzpicture}
+  }
 \end{columns}
 \end{frame}
 
 % 6
-\begin{frame}{Resultado principal: tiempo de ejecución}
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-  width=11.3cm,height=5.5cm,
-  ybar,
-  bar width=22pt,
-  ymin=0,
-  ylabel={Segundos},
-  symbolic x coords={CPU,CUDA,OpenCL},
-  xtick=data,
-  nodes near coords,
-  nodes near coords align={vertical},
-  every node near coord/.append style={font=\small},
-  axis lines*=left,
-  enlarge x limits=0.3,
-  ymajorgrids=true,
-  grid style={gray!20},
-  tick label style={font=\small},
-  label style={font=\small},
-  fill=DeepBlue!65,
-]
-\addplot coordinates {(CPU,1351) (CUDA,120) (OpenCL,106)};
-\end{axis}
-\end{tikzpicture}
+\begin{frame}{Resultado temporal estimado: ejecución y aceleración}
+\vspace{-0.1cm}
+\begin{columns}[T,totalwidth=\textwidth]
+  % Left Column: Enhanced Bar Chart
+  \column{0.54\textwidth}
+  \begin{tikzpicture}
+  \begin{axis}[
+    width=7.8cm, height=5.6cm,
+    ybar,
+    bar width=18pt,
+    bar shift=0pt,
+    ymin=0, ymax=1600,
+    ylabel={Tiempo (segundos)},
+    symbolic x coords={CPU,CUDA,OpenCL},
+    xtick={CPU,CUDA,OpenCL},
+    nodes near coords,
+    nodes near coords align={vertical},
+    every node near coord/.append style={font=\scriptsize\bfseries},
+    axis lines*=left,
+    enlarge x limits=0.25,
+    ymajorgrids=true,
+    grid style={gray!20},
+    tick label style={font=\scriptsize\bfseries},
+    label style={font=\scriptsize},
+  ]
+    \addplot[fill=DarkGray!70, draw=DarkGray, nodes near coords={1.351 s}] coordinates {(CPU,1351)};
+    \addplot[fill=DeepBlue!85, draw=DeepBlue, nodes near coords={\shortstack{120 s\\{\tiny\color{DeepBlue}(\(\mathbf{11,3\times}\))}}}] coordinates {(CUDA,120)};
+    \addplot[fill=Accent!85, draw=Accent, nodes near coords={\shortstack{106 s\\{\tiny\color{Accent}(\(\mathbf{12,7\times}\))}}}] coordinates {(OpenCL,106)};
+  \end{axis}
+  \end{tikzpicture}
 
-\vspace{0.1cm}
-\small Las GPU reducen el tiempo aproximadamente un orden de magnitud frente a la mejor configuración CPU.
+  % Right Column: KPI Cards & Architectural Insights
+  \column{0.44\textwidth}
+  \vspace{0.05cm}
+  % Card 1: GPU Acceleration
+  \begin{tikzpicture}
+    \node[draw=DeepBlue, fill=SoftBlue!40, rounded corners=4pt, inner sep=6pt, text width=\linewidth-16pt] {
+      {\scriptsize\textbf{\color{DeepBlue}$\blacktriangleright$ Aceleración masiva en GPU}}\\[0.1cm]
+      \begin{itemize}\setlength\itemsep{0.1cm}\tiny
+        \item \textbf{Aceleración (\emph{speedup}):} \textbf{\(11,28\times\)} en CUDA y \textbf{\(12,74\times\)} en OpenCL frente a CPU base.
+        \item \textbf{Causa técnica:} El hashing SHA-256 es una tarea \emph{embarrassingly parallel} que aprovecha miles de núcleos SIMD/SIMT.
+      \end{itemize}
+    };
+  \end{tikzpicture}
+
+  \vspace{0.25cm}
+
+  % Card 2: CPU & Cluster Bottlenecks
+  \uncover<2->{
+  \begin{tikzpicture}
+    \node[draw=DarkGray!50, fill=gray!5, rounded corners=4pt, inner sep=6pt, text width=\linewidth-16pt] {
+      {\scriptsize\textbf{\color{DarkGray}$\blacktriangleright$ Cuellos de botella de hardware}}\\[0.1cm]
+      \begin{itemize}\setlength\itemsep{0.1cm}\tiny
+        \item \textbf{CPU (POSIX / OpenMP):} Escalamiento limitado; se estanca al agotar los núcleos físicos (4 núcleos / 8 hilos).
+        \item \textbf{Clúster (Open MPI):} La sobrecarga de virtualización en GCP y latencia de red anulan las ventajas de agregar instancias.
+      \end{itemize}
+    };
+  \end{tikzpicture}
+  }
+\end{columns}
 \end{frame}
 
 % 7
-\begin{frame}{Resultado energético estimado}
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-  width=11.5cm,height=5.5cm,
-  ybar,
-  bar width=18pt,
-  ymin=0,
-  ymax=110,
-  ylabel={Wh estimados},
-  symbolic x coords={POSIX,OpenMP,CUDA,Open MPI},
-  xtick=data,
-  nodes near coords,
-  nodes near coords align={vertical},
-  every node near coord/.append style={font=\scriptsize},
-  axis lines*=left,
-  enlarge x limits=0.22,
-  ymajorgrids=true,
-  grid style={gray!20},
-  tick label style={font=\small},
-  label style={font=\small},
-  fill=Accent!70,
-]
-\addplot coordinates {(POSIX,21.05) (OpenMP,21.10) (CUDA,4.66) (Open MPI,100.20)};
-\end{axis}
-\end{tikzpicture}
+\begin{frame}{Resultado energético estimado: consumo y eficiencia}
+\vspace{-0.1cm}
+\begin{columns}[T,totalwidth=\textwidth]
+  % Left Column: Color-Coded Bar Chart
+  \column{0.52\textwidth}
+  \begin{tikzpicture}
+  \begin{axis}[
+    width=7.8cm, height=5.6cm,
+    ybar,
+    bar width=16pt,
+    bar shift=0pt,
+    ymin=0, ymax=118,
+    ylabel={Consumo estimado (Wh)},
+    symbolic x coords={POSIX,OpenMP,CUDA,Open MPI},
+    xtick={POSIX,OpenMP,CUDA,Open MPI},
+    nodes near coords,
+    nodes near coords align={vertical},
+    every node near coord/.append style={font=\scriptsize\bfseries},
+    axis lines*=left,
+    enlarge x limits=0.20,
+    ymajorgrids=true,
+    grid style={gray!20},
+    tick label style={font=\tiny\bfseries},
+    label style={font=\scriptsize},
+  ]
+    \addplot[fill=DarkGray!60, draw=DarkGray, nodes near coords={21,05}] coordinates {(POSIX,21.05)};
+    \addplot[fill=DarkGray!80, draw=DarkGray, nodes near coords={21,10}] coordinates {(OpenMP,21.10)};
+    \addplot[fill=Good!85, draw=Good!90!black, nodes near coords={\shortstack{4,66\\{\tiny\color{Good!90!black}(\(\mathbf{-78\%}\))}}}] coordinates {(CUDA,4.66)};
+    \addplot[fill=Accent!85, draw=Accent, nodes near coords={\shortstack{100,20\\{\tiny\color{Accent}(\(\mathbf{21,5\times}\))}}}] coordinates {(Open MPI,100.20)};
+  \end{axis}
+  \end{tikzpicture}
 
-\small La comparación distingue potencia instantánea de energía total: terminar antes puede consumir menos.
+  % Right Column: Economic & Physical Insights
+  \column{0.46\textwidth}
+  \vspace{0.05cm}
+  % Card 1: The Power vs Energy Paradox
+  \begin{tikzpicture}
+    \node[draw=Good!80!black, fill=Good!5, rounded corners=4pt, inner sep=6pt, text width=\linewidth-16pt] {
+      {\scriptsize\textbf{\color{Good!90!black}$\blacktriangleright$ Paradoja de potencia vs. energía}}\\[0.1cm]
+      \begin{itemize}\setlength\itemsep{0.1cm}\tiny
+        \item \textbf{Mecanismo:} \(\text{Energía (Wh)} = \text{Potencia (W)} \times \text{Tiempo (h)}\).
+        \item \textbf{Eficiencia de GPU:} Aunque la GTX 1050 tiene mayor TDP (\(75\text{ W}\) vs. \(45\text{ W}\) de la CPU), al terminar \(11\times\) más rápido consume \textbf{\(4,5\times\) menos energía total} (\(4,66\text{ Wh}\)).
+      \end{itemize}
+    };
+  \end{tikzpicture}
+
+  \vspace{0.25cm}
+
+  % Card 2: Cluster Penalty & Limitations
+  \uncover<2->{
+  \begin{tikzpicture}
+    \node[draw=Warn!80!black, fill=Warn!5, rounded corners=4pt, inner sep=6pt, text width=\linewidth-16pt] {
+      {\scriptsize\textbf{\color{Warn!90!black}$\blacktriangleright$ Despilfarro en Clúster y Límites}}\\[0.1cm]
+      \begin{itemize}\setlength\itemsep{0.1cm}\tiny
+        \item \textbf{Penalización Open MPI:} Consume \textbf{\(100,20\text{ Wh}\)} (\(21,5\times\) más que CUDA). Agregar instancias suma potencia de base sin acelerar el cómputo.
+        \item \textbf{Límite metodológico:} Modelo teórico indirecto (\(\text{TDP} \times t\)); omite medición eléctrica directa en toma y consumo de red en espera.
+      \end{itemize}
+    };
+  \end{tikzpicture}
+  }
+\end{columns}
 \end{frame}
 
 % 8
-\begin{frame}{Argumentos a favor}
-\begin{tikzpicture}[every node/.style={font=\small}]
-  \node[draw=Good, fill=Good!10, rounded corners, text width=5.8cm, inner sep=7pt] (a) at (0,2.0) {\textbf{Delimitación clara}\\Encabezado, nonce, función hash y plataformas quedan definidos.};
-  \node[draw=Good, fill=Good!10, rounded corners, text width=5.8cm, inner sep=7pt] (b) at (6.6,2.0) {\textbf{Comparación útil}\\CPU, GPU y clúster bajo la misma carga de trabajo.};
-  \node[draw=Good, fill=Good!10, rounded corners, text width=5.8cm, inner sep=7pt] (c) at (0,0.35) {\textbf{Resultado robusto}\\CUDA y OpenCL coinciden en la ventaja de GPU para hashing masivo.};
-  \node[draw=Good, fill=Good!10, rounded corners, text width=5.8cm, inner sep=7pt] (d) at (6.6,0.35) {\textbf{Dimensión energética}\\Incluye energía estimada, no solo velocidad de ejecución.};
-  \node[draw=DeepBlue, fill=SoftBlue, rounded corners, text width=12.4cm, inner sep=8pt] at (3.3,-1.45) {\textbf{Aporte central:} la arquitectura de hardware condiciona el costo computacional y energético de ejecutar la fase de generación de hashes.};
+\begin{frame}{Argumentos a favor: aportes metodológicos y empíricos}
+\vspace{-0.15cm}
+\centering
+
+% 2x2 Grid of Thematic Cards with Relative Positioning
+\begin{tikzpicture}[
+  card/.style={
+    draw=Good!80!black,
+    fill=Good!5,
+    rounded corners=4pt,
+    text width=6.35cm,
+    align=left,
+    inner sep=5.5pt,
+    minimum height=1.82cm
+  }
+]
+  % Card 1: Rigor y Reproducibilidad
+  \node[card, anchor=north] (c1) at (-3.55, 2.05) {
+    \tagbox{Good!20}{\color{Good!90!black}\tiny\textbf{REPRODUCIBILIDAD}}\\[0.06cm]
+    {\scriptsize\textbf{Delimitación y Carga Real}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Emplea datos reales del bloque de Bitcoin \#453194.\\[0.03cm]
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Define formalmente el nonce (\(4\times 10^9\)) y actualiza a SHA-256.}
+  };
+
+  % Card 2: Comparación Multi-paradigma
+  \node[card, anchor=north] (c2) at (3.55, 2.05) {
+    \tagbox{Good!20}{\color{Good!90!black}\tiny\textbf{ARQUITECTURA}}\\[0.06cm]
+    {\scriptsize\textbf{Evaluación Multi-paradigma}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Evalúa CPU (OpenMP), GPU (CUDA/OpenCL) y clúster (MPI).\\[0.03cm]
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Aplica idéntica carga algorítmica a todas las plataformas.}
+  };
+
+  % Card 3: Convergencia Empírica en GPU
+  \node[card, anchor=north, below=0.22cm of c1.south, visible on=<2->] (c3) {
+    \tagbox{Good!20}{\color{Good!90!black}\tiny\textbf{CONVERGENCIA}}\\[0.06cm]
+    {\scriptsize\textbf{Robustez del Desempeño GPU}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Good!80!black}$\blacktriangleright$} CUDA (\(11,28\times\)) y OpenCL (\(12,74\times\)) validan la aceleración.\\[0.03cm]
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Confirma empíricamente que el hash es \emph{embarrassingly parallel}.}
+  };
+
+  % Card 4: Dimensión Energética
+  \node[card, anchor=north, below=0.22cm of c2.south, visible on=<2->] (c4) {
+    \tagbox{Good!20}{\color{Good!90!black}\tiny\textbf{ENERGÍA}}\\[0.06cm]
+    {\scriptsize\textbf{Métrica de Energía Acumulada}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Va más allá de medir únicamente tiempo de reloj (\(t\)).\\[0.03cm]
+    \textbf{\color{Good!80!black}$\blacktriangleright$} Demuestra que mayor potencia (\(W\)) reduce el gasto total (\(Wh\)).}
+  };
+
+  % Bottom Synthesis Banner
+  \node[fill=SoftBlue, draw=DeepBlue, rounded corners=3pt, inner sep=4.5pt, text width=13.6cm, align=center, below=0.22cm of $(c3.south)!0.5!(c4.south)$, visible on=<3->] (banner) {
+    {\scriptsize\textbf{\color{DeepBlue}Aporte central:}} \;\;
+    {\scriptsize El artículo aporta un benchmark de ingeniería riguroso que cuantifica cómo la microarquitectura condiciona el costo local de minado.}
+  };
 \end{tikzpicture}
 \end{frame}
 
 % 9
-\begin{frame}{Argumentos en contra}
+\begin{frame}{Argumentos en contra: límites metodológicos y sistémicos}
+\vspace{-0.15cm}
 \centering
-\begin{tikzpicture}[every node/.style={font=\small}, node distance=0.8cm]
-  \node[draw=Warn, fill=Warn!10, rounded corners, text width=4.0cm, align=center, inner sep=7pt] (local) {Mejora local\\\textbf{hash generation}};
-  \node[right=1.1cm of local, draw=DarkGray, rounded corners, text width=4.0cm, align=center, inner sep=7pt] (system) {Conclusión sistémica\\seguridad, escala, sostenibilidad};
-  \draw[-{Latex[length=2.5mm]}, very thick, dashed, Warn] (local) -- node[above]{\scriptsize salto no demostrado} (system);
 
-  \node[below=1.0cm of local, draw=Warn, fill=SoftOrange, rounded corners, text width=4.5cm, inner sep=7pt] (m1) {No mide difusión, validación ni red completa.};
-  \node[right=0.75cm of m1, draw=Warn, fill=SoftOrange, rounded corners, text width=4.5cm, inner sep=7pt] (m2) {Energía indirecta: sin medición eléctrica directa.};
-  \node[below=0.45cm of m1, draw=Warn, fill=SoftOrange, rounded corners, text width=4.5cm, inner sep=7pt] (m3) {No modela incentivos ni participantes estratégicos.};
-  \node[right=0.75cm of m3, draw=Warn, fill=SoftOrange, rounded corners, text width=4.5cm, inner sep=7pt] (m4) {Sin ASIC: no representa la frontera de Bitcoin.};
+% 2x2 Grid of Thematic Critical Cards with Relative Positioning
+\begin{tikzpicture}[
+  card/.style={
+    draw=Warn!85!black,
+    fill=Warn!6,
+    rounded corners=4pt,
+    text width=6.35cm,
+    align=left,
+    inner sep=5.5pt,
+    minimum height=1.82cm
+  }
+]
+  % Card 1: Omisión de Dinámica de Red
+  \node[card, anchor=north] (c1) at (-3.55, 2.05) {
+    \tagbox{Warn!22}{\color{Warn!90!black}\tiny\textbf{RED Y CONSENSO}}\\[0.06cm]
+    {\scriptsize\textbf{Omisión de la Dinámica Distribuida}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Omite difusión de mínimos locales e inundación de red (\(O(N^2)\)).\\[0.03cm]
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Ignora latencia y asincronía, factores determinantes de \emph{forks}.}
+  };
+
+  % Card 2: Vulnerabilidad Sybil
+  \node[card, anchor=north] (c2) at (3.55, 2.05) {
+    \tagbox{Warn!22}{\color{Warn!90!black}\tiny\textbf{SEGURIDAD SYBIL}}\\[0.06cm]
+    {\scriptsize\textbf{Pérdida del Anclaje Termodinámico}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Bajar la barrera de cómputo abarata crear identidades falsas.\\[0.03cm]
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Sin el costo termodinámico de Bitcoin, la resistencia Sybil colapsa.}
+  };
+
+  % Card 3: Metrología y Consumo
+  \node[card, anchor=north, below=0.22cm of c1.south, visible on=<2->] (c3) {
+    \tagbox{Warn!22}{\color{Warn!90!black}\tiny\textbf{METROLOGÍA}}\\[0.06cm]
+    {\scriptsize\textbf{Estimación Teórica e Incompleta}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Cálculo indirecto (\(P_{\text{TDP}} \times t\)) omite consumo en toma y fuente.\\[0.03cm]
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Excluye energía de nodos en espera (\emph{idle}) y telecomunicaciones.}
+  };
+
+  % Card 4: Frontera Tecnológica
+  \node[card, anchor=north, below=0.22cm of c2.south, visible on=<2->] (c4) {
+    \tagbox{Warn!22}{\color{Warn!90!black}\tiny\textbf{FRONTERA REAL}}\\[0.06cm]
+    {\scriptsize\textbf{Sesgo de Benchmark frente a ASICs}}\\[0.06cm]
+    {\tiny\color{GrayText}
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Compara contra Bitcoin sin incluir mineros dedicados (ASIC).\\[0.03cm]
+    \textbf{\color{Warn!90!black}$\blacktriangleright$} Los ASIC superan a las GPU por más de \(1.000\times\) en J/TH.}
+  };
+
+  % Bottom Synthesis Banner
+  \node[fill=SoftOrange, draw=Warn, rounded corners=3pt, inner sep=4.5pt, text width=13.6cm, align=center, below=0.22cm of $(c3.south)!0.5!(c4.south)$, visible on=<3->] (banner) {
+    {\scriptsize\textbf{\color{Warn!90!black}}} \;\;
+    {\scriptsize La optimización local de hashes en un nodo aislado no garantiza viabilidad, escalabilidad ni seguridad en una red distribuida global.}
+  };
 \end{tikzpicture}
 \end{frame}
 
 % 10
-\begin{frame}{Conclusión: eficiencia no equivale a sostenibilidad}
-\begin{columns}[T,totalwidth=\textwidth]
-\column{0.55\textwidth}
-\begin{itemize}\setlength\itemsep{0.28cm}
-  \item El artículo es valioso como benchmark de ingeniería.
-  \item No demuestra superioridad del protocolo democrático frente a Bitcoin.
-  \item La sostenibilidad exige evaluar red completa, incentivos, emisiones y seguridad.
-  \item En ASIC modernos, la alta densidad térmica abre una variable adicional: recuperación de calor residual.
-\end{itemize}
+\begin{frame}{Conclusiones}
+\vspace{-0.15cm}
 
-\column{0.42\textwidth}
-\centering
-\begin{tikzpicture}[every node/.style={font=\small}]
-  \node[draw=DeepBlue, fill=SoftBlue, rounded corners, minimum width=2.7cm, minimum height=1cm] (asic) at (0,1.2) {ASIC};
-  \node[draw=Accent, fill=SoftOrange, rounded corners, minimum width=2.7cm, minimum height=1cm] (heat) at (0,-0.2) {Calor residual};
-  \node[draw=Good, fill=Good!10, rounded corners, minimum width=2.7cm, minimum height=1cm] (use) at (0,-1.6) {Uso térmico};
-  \draw[-{Latex[length=2.5mm]}, thick, Accent] (asic) -- node[right]{\scriptsize kW concentrados} (heat);
-  \draw[-{Latex[length=2.5mm]}, thick, Good] (heat) -- node[right]{\scriptsize captura útil} (use);
-  \draw[rounded corners, draw=DarkGray, dashed] (-1.7,-2.25) rectangle (1.7,1.85);
-\end{tikzpicture}
+\begin{columns}[T,totalwidth=\textwidth]
+  % Left Column: 3 Synthesizing Takeaway Cards
+  \column{0.53\textwidth}
+  \begin{tikzpicture}[
+    c_base/.style={rounded corners=3pt, text width=\linewidth-12pt, align=left, inner sep=4.5pt, minimum height=1.16cm}
+  ]
+    % Card 1: Ingeniería
+    \node[c_base, draw=DeepBlue!60, fill=SoftBlue!40] (c1) at (0,0) {
+      \tagbox{DeepBlue!18}{\color{DeepBlue}\tiny\textbf{INGENIERÍA}}\hspace{0.15cm}{\scriptsize\textbf{Aporte Técnico en Microarquitectura}}\\[0.04cm]
+      {\tiny\color{GrayText}
+      \textbf{\color{DeepBlue}$\blacktriangleright$} Confirma que SHA-256 es \emph{embarrassingly parallel} en GPU.\\[0.02cm]
+      \textbf{\color{DeepBlue}$\blacktriangleright$} Evidencia severa penalización energética en clúster (Open MPI).}
+    };
+
+    % Card 2: Consenso
+    \node[c_base, draw=Warn!70, fill=SoftOrange!45, below=0.12cm of c1.south, visible on=<2->] (c2) {
+      \tagbox{Warn!22}{\color{Warn!90!black}\tiny\textbf{CONSENSO}}\hspace{0.15cm}{\scriptsize\textbf{Salto Sistémico Injustificado}}\\[0.04cm]
+      {\tiny\color{GrayText}
+      \textbf{\color{Warn!90!black}$\blacktriangleright$} Acelerar el hash local no demuestra viabilidad ni escala de red.\\[0.02cm]
+      \textbf{\color{Warn!90!black}$\blacktriangleright$} Sin difusión (\(O(N^2)\)) ni costo Sybil, el consenso democrático es inestable.}
+    };
+
+    % Card 3: Economía
+    \node[c_base, draw=DarkGray!50, fill=gray!6, below=0.12cm of c2.south, visible on=<2->] (c3) {
+      \tagbox{gray!20}{\color{DarkGray}\tiny\textbf{ECONOMÍA}}\hspace{0.15cm}{\scriptsize\textbf{Eficiencia Micro $\neq$ Sostenibilidad}}\\[0.04cm]
+      {\tiny\color{GrayText}
+      \textbf{\color{DarkGray}$\blacktriangleright$} Menos vatios en un nodo aislado no equivale a sostenibilidad global.\\[0.02cm]
+      \textbf{\color{DarkGray}$\blacktriangleright$} La seguridad exige anclaje termodinámico y costo irrecuperable.}
+    };
+  \end{tikzpicture}
+
+  % Right Column: Modern Thermodynamic Frontier Card
+  \column{0.45\textwidth}
+  \begin{tikzpicture}
+    \node[draw=Good!75!black, fill=Good!4, rounded corners=4pt, inner sep=5pt, text width=\linewidth-12pt, align=left] (panel) {
+      \tagbox{Good!20}{\color{Good!90!black}\tiny\textbf{FRONTERA REAL}}\hspace{0.15cm}{\scriptsize\textbf{Cogeneración y Red}}\\[0.10cm]
+      \centering
+      \begin{tikzpicture}[node distance=0.16cm, flow/.style={draw=Good!80!black, fill=white, rounded corners=2.5pt, text width=5.0cm, align=center, inner sep=2.5pt, font=\tiny}]
+        \node[flow] (n1) {\textbf{ASIC Especializado} (\(>1.000\times\) más eficiente que GPU)};
+        \node[flow, below=0.18cm of n1] (n2) {\textbf{Calor Residual} (60--80\(^\circ\)C, refrigeración líquida)};
+        \node[flow, below=0.18cm of n2] (n3) {\textbf{Uso Térmico y Red} (Calefacción distrital, agro, demanda flexible)};
+        \draw[-{Latex[length=1.6mm]}, thick, Good!80!black] (n1) -- node[right, font=\tiny, text=Good!90!black]{\;kW concentrados} (n2);
+        \draw[-{Latex[length=1.6mm]}, thick, Good!80!black] (n2) -- node[right, font=\tiny, text=Good!90!black]{\;captura útil} (n3);
+      \end{tikzpicture}\\[0.08cm]
+      {\tiny\color{GrayText}\textbf{Integración sistémica:} La alta densidad térmica de los ASICs modernos habilita reutilizar el calor.}
+    };
+  \end{tikzpicture}
 \end{columns}
-\vspace{0.1cm}
-{\scriptsize Referencias: Nakamoto (2008); Paul, Sarkar y Mukherjee (2014); Lugo y Pedraza (2020).}
+
+\vspace{0.12cm}
+
+% Verdict Banner
+\begin{tikzpicture}
+  \node[fill=DeepBlue!8, draw=DeepBlue, rounded corners=3pt, inner sep=4.2pt, text width=\linewidth-14pt, align=center, visible on=<3->] {
+    {\scriptsize\textbf{\color{DeepBlue}}} \;\;
+    {\scriptsize La aceleración en GPU es un logro técnico valioso pero insuficiente:\\[0.02cm]
+    el consenso descentralizado exige escalabilidad de red y anclaje termodinámico.}
+  };
+\end{tikzpicture}
+
+\vspace{0.06cm}
+\centering
+{\tiny\color{DarkGray} Referencias: Nakamoto (2008); Paul, Sarkar \& Mukherjee (2014); Lugo \& Pedraza (2020).}
 \end{frame}
 
 \end{document}
